@@ -1,6 +1,7 @@
 ---
 title: "Method Coffee Roasters - El Salvador: Bosque Lya"
 date: "2021-12-01T00:00:00Z"
+thumbnail: "./method_coffee_roaster.png"
 tags:
  - coffee-club
  - both

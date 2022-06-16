@@ -1,6 +1,7 @@
 ---
 title: "Tugboat - Ethiopia: Djimma"
 date: "2022-03-01T00:00:00Z"
+thumbnail: "./tugboat.png"
 tags:
  - coffee-club
  - both

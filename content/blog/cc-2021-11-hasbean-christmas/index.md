@@ -1,6 +1,7 @@
 ---
 title: Hasbean - Peaceful Christmas
 date: "2021-11-01T00:00:00Z"
+thumbnail: "./hasbean.png"
 tags:
  - coffee-club
  - both

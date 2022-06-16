@@ -1,12 +1,9 @@
 {
   "name": "snez-coffee",
   "private": true,
-  "description": "A starter for a blog powered by Gatsby and Markdown",
-  "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
-  },
+  "description": "A coffee blog powered by Gatsby",
+  "version": "0.1.1",
+  "author": "Keir Davis <keir@sneezey.uk>",
   "dependencies": {
     "bootstrap": "^5.1.3",
     "gatsby": "^4.16.0",
@@ -36,15 +33,10 @@
   "devDependencies": {
     "prettier": "^2.6.2"
   },
-  "homepage": "https://github.com/gatsbyjs/gatsby-starter-blog#readme",
   "keywords": [
     "gatsby"
   ],
   "license": "0BSD",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
-  },
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
