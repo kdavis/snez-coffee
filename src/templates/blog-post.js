@@ -1,101 +1,71 @@
-import * as React from "react"
-import { Link, graphql } from "gatsby"
+import React from 'react'
+import { graphql } from 'gatsby'
+import get from 'lodash/get'
+import { renderRichText } from 'gatsby-source-contentful/rich-text'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
+import { BLOCKS } from '@contentful/rich-text-types'
+import { GatsbyImage } from 'gatsby-plugin-image'
 
-import Layout from "../components/layout"
-import Seo from "../components/seo"
+import Layout from '../components/layout'
+import Seo from '../components/seo'
 
-const BlogPostTemplate = ({ data, location }) => {
-  const post = data.markdownRemark
-  const siteTitle = data.site.siteMetadata?.title || `Title`
-  const { previous, next } = data
+class BlogPostTemplate extends React.Component {
+  render() {
+    const post = get(this.props, 'data.contentfulCoffeePost')
+    const plainTextDescription = documentToPlainTextString(
+      JSON.parse(post.body.raw)
+    )
 
-  return (
-    <Layout location={location} title={siteTitle}>
-      <Seo
-        title={post.frontmatter.title}
-        description={post.frontmatter.description || post.excerpt}
-      />
-      <article
-        className="blog-post"
-        itemScope
-        itemType="http://schema.org/Article"
-      >
-        <header>
-          <h1 itemProp="headline">{post.frontmatter.title}</h1>
-          <p>{post.frontmatter.date}</p>
-        </header>
-        <section
-          dangerouslySetInnerHTML={{ __html: post.html }}
-          itemProp="articleBody"
+    const options = {
+      renderNode: {
+        [BLOCKS.EMBEDDED_ASSET]: (node) => {
+          const { gatsbyImageData, description } = node.data.target
+          if (!gatsbyImageData) {
+            // asset is not an image
+            return <p>Not an image?</p>
+          }
+          return <GatsbyImage image={gatsbyImageData} alt={description} />
+        },
+      },
+    }
+
+    return (
+      <Layout location={this.props.location}>
+        <Seo
+          title={post.title}
+          description={plainTextDescription}
+          image={`http:${post.thumbnail.resize.src}`}
         />
-      </article>
-      <nav className="blog-post-nav">
-        <ul
-          style={{
-            display: `flex`,
-            flexWrap: `wrap`,
-            justifyContent: `space-between`,
-            listStyle: `none`,
-            padding: 0,
-          }}
-        >
-          <li>
-            {previous && (
-              <Link to={previous.fields.slug} rel="prev">
-                ← {previous.frontmatter.title}
-              </Link>
-            )}
-          </li>
-          <li>
-            {next && (
-              <Link to={next.fields.slug} rel="next">
-                {next.frontmatter.title} →
-              </Link>
-            )}
-          </li>
-        </ul>
-      </nav>
-    </Layout>
-  )
+        <article class="blog-post">
+          <h2 class="blog-post-title mb-1">{post.title}</h2>
+          {post.body?.raw && renderRichText(post.body, options)}
+        </article>
+      </Layout>
+    )
+  }
 }
 
 export default BlogPostTemplate
 
 export const pageQuery = graphql`
-  query BlogPostBySlug(
-    $id: String!
-    $previousPostId: String
-    $nextPostId: String
-  ) {
-    site {
-      siteMetadata {
-        title
+  query BlogPostBySlug($slug: String!) {
+    contentfulCoffeePost(slug: { eq: $slug }) {
+      title
+      slug
+      thumbnail {
+        resize(height: 256, width: 256) {
+          src
+        }
       }
-    }
-    markdownRemark(id: { eq: $id }) {
-      id
-      excerpt(pruneLength: 160)
-      html
-      frontmatter {
-        title
-        date(formatString: "MMMM DD, YYYY")
-        description
-      }
-    }
-    previous: markdownRemark(id: { eq: $previousPostId }) {
-      fields {
-        slug
-      }
-      frontmatter {
-        title
-      }
-    }
-    next: markdownRemark(id: { eq: $nextPostId }) {
-      fields {
-        slug
-      }
-      frontmatter {
-        title
+      body {
+        raw
+        references {
+          ... on ContentfulAsset {
+            contentful_id
+            __typename
+            gatsbyImageData(width: 300, placeholder: BLURRED)
+          }
+        }
       }
     }
   }

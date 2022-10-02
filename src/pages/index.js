@@ -1,70 +1,44 @@
-import * as React from "react"
-import { graphql } from "gatsby"
+import React from 'react'
+import { graphql } from 'gatsby'
+import get from 'lodash/get'
 
-import Layout from "../components/layout"
-import Seo from "../components/seo"
+import Layout from '../components/layout'
+import ArticlePreview from '../components/article-preview'
 
-const BlogIndex = ({ data, location }) => {
-  const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+class RootIndex extends React.Component {
+  render() {
+    const posts = get(this, 'props.data.allContentfulCoffeePost.nodes')
+    // const [author] = get(this, 'props.data.allContentfulPerson.nodes')
 
-  return (
-    <Layout location={location} title={siteTitle}>
-      <Seo title="All posts" />
-
-      <div class="my-3 p-3 bg-body rounded shadow-sm">
-        <h6 class="border-bottom pb-2 mb-0">Recent coffees</h6>
-
-        <div class="d-flex flex-column align-items-stretch">
-          {posts.map(post => {
-            const title = post.frontmatter.title || post.fields.slug;
-
-            const thumbnail = post.frontmatter.thumbnail?.publicURL;
-
-            return (
-              <div class="d-flex text-muted pt-3" key={post.fields.slug}>
-                {
-                  thumbnail && <img alt={title} className="flex-shrink-0 me-2 rounded" style={{ width: "32px", height: "32px" }} src={thumbnail} />
-                }
-                <p class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                  <span class="d-block text-gray-dark"><strong>{title}</strong> <small> - {post.frontmatter.date}</small></span>
-                  <span dangerouslySetInnerHTML={{
-                    __html: post.frontmatter.description || post.excerpt,
-                  }}
-                    itemProp="description"></span>
-
-                </p>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </Layout>
-  )
+    return (
+      <Layout location={this.props.location}>
+        <ArticlePreview posts={posts} />
+      </Layout>
+    )
+  }
 }
 
-export default BlogIndex
+export default RootIndex
 
 export const pageQuery = graphql`
-  query {
-    site {
-      siteMetadata {
-        title
-      }
-    }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+  query HomeQuery {
+    allContentfulCoffeePost(sort: { fields: date, order: DESC }, limit: 5) {
       nodes {
-        excerpt
-        fields {
-          slug
-        }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
-          title
-          description
-          thumbnail {
-            publicURL
+        title
+        slug
+        thumbnail {
+          gatsbyImage(
+            layout: CONSTRAINED
+            placeholder: BLURRED
+            width: 64
+            height: 64
+          )
+          resize(height: 64, width: 64) {
+            src
           }
+        }
+        overview {
+          overview
         }
       }
     }

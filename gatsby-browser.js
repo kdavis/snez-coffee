@@ -1,4 +1,3 @@
-// Highlighting for code blocks
-import "prismjs/themes/prism.css"
+import '@fontsource/montserrat'
 
 import 'bootstrap/dist/css/bootstrap.css'

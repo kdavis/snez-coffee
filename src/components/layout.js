@@ -1,18 +1,21 @@
-import * as React from "react"
-import Header from "./header"
-import Footer from "./footer"
+import React from 'react'
 
-const Layout = ({ location, title, children }) => {
-  const rootPath = `${__PATH_PREFIX__}/`
-  const isRootPath = location.pathname === rootPath
+import './variables.css'
+import './global.css'
+import Seo from './seo'
+import Navigation from './navigation'
+class Template extends React.Component {
+  render() {
+    const { children } = this.props
 
-  return (
-    <div className="global-wrapper container text-lowercase" data-is-root-path={isRootPath}>
-      <Header className="global-header" />
-      <main>{children}</main>
-      <Footer />
-    </div>
-  )
+    return (
+      <>
+        <Seo />
+        <Navigation />
+        <main className="container">{children}</main>
+      </>
+    )
+  }
 }
 
-export default Layout
+export default Template
